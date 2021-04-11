@@ -24,12 +24,16 @@ set(Random_BuildTests OFF)
 add_subdirectory(random)
 
 # json for serialization
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+set(JSON_MultipleHeaders ON)
 add_subdirectory(json)
 
 # improve std::list performance
 add_subdirectory(Memory-Pool)
 
-add_executable(${PROJECT_NAME} "src/main.cpp")
+add_executable(${PROJECT_NAME} "src/main.cpp"
+  "src/Graphics/Curses.cpp" "src/Graphics/Widgets.cpp"
+  "src/Game/Genetic.cpp" "src/Game/Tree.cpp" "src/Game/World.cpp" "src/Game/Display.cpp" "src/Game/Serialization.cpp")
 target_include_directories(${PROJECT_NAME} PRIVATE ${CURSES_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE 
   fmt::fmt 
