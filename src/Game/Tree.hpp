@@ -23,11 +23,15 @@ namespace game
 		Genom genom;
 
 		Tree(int energy, const Genom& genom = {});
-
+		/* spawn a tree at the bottom of world */
 		static Tree& spawn(World& world, unsigned int x, int energy = 300);
+		/* grow tree by cloning it cells */
 		static void grow(World& world, entt::entity tree);
+		/* kill tree, all cells will become seeds */
 		static void kill(World& world, entt::entity tree);
+		/* destroy tree, no seeds will be spawned */
 		static void destroy(World& world, entt::entity tree);
+		/* plant a seed */
 		static void plant(World& world, entt::entity tree);
 
 		/* default value is 80 */
