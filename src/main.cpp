@@ -53,9 +53,11 @@ int main()
 		cyan(graphics::Color::WHITE, graphics::Color::CYAN),
 		white(graphics::Color::BLACK, graphics::Color::WHITE);
 
-	header.on(black);
-	header.print("Hello emacs");
-	endline.on(black);
+	header.on(white);
+	header.background(white);
+	header.properties[0] = "Press SPACE to begin";
+	endline.on(white);
+	endline.background(white);
 	endline.print("Hello world");
 
 	displayer.pBlackPair = &black;
@@ -67,16 +69,16 @@ int main()
 	displayer.pCyanPair = &cyan;
 	displayer.pWhitePair = &white;
 
-	// game::Tree::spawn(world, 10);
-	// game::Tree::spawn(world, 20);
-	// game::Tree::spawn(world, 30);
 	for (int i = 1; i < 13; i++)
 		game::Tree::spawn(world, i * 10);
 
-	header.print("Number of trees: {}", registry.size<game::Tree>());
-
+	enum class Mode {
+		IDLE,
+		TICK
+	};
 	bool running = true;
-	bool tick = false;
+	Mode mode = Mode::IDLE;
+	int numTicks = 0;
 	while(running)
 	{
 		milliseconds wait_time{200};
@@ -89,14 +91,11 @@ int main()
 					running = false;
 					break;
 				case graphics::Key::SPACE:
-					/*if (!world.tick())
-					  {
-					  endline.on(magenta);
-					  endline.print("No life");
-					  }
-					  wait_time = milliseconds{400};*/
-					tick = !tick;
-					header.print("{}", tick);
+					switch(mode)
+					{
+						case Mode::IDLE: mode = Mode::TICK; break;
+						case Mode::TICK: mode = Mode::IDLE; break;
+					}
 					break;
 				case graphics::Key::D:
 					dump_json(world);
@@ -107,14 +106,18 @@ int main()
 			}
 		}
 
-		if (tick && !world.tick())
+		if (mode == Mode::TICK)
 		{
-			endline.on(magenta);
-			endline.print("No life");
+			header.properties[0] = fmt::format("Trees:[{:4}]", registry.size<game::Tree>());
+			header.properties[15] = fmt::format("Year:[{:5}]", numTicks++);
+			if (!world.tick())
+			{
+				endline.on(magenta);
+				endline.print("No life");
+			}	
 		}
 
 		displayer(window);
-		// window.refresh();
 		gamescreen.draw();
 		std::this_thread::sleep_for(wait_time);
 	}

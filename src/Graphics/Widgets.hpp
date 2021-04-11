@@ -3,6 +3,7 @@
 #include "Curses.hpp"
 
 #include <string>
+#include <map>
 
 namespace graphics
 {
@@ -43,10 +44,20 @@ namespace graphics
 			}
 		};
 
+		class PropertyLine : public Window
+		{
+		public:
+			std::map<int, std::string> properties;
+
+			PropertyLine(int w, int y, int x);
+
+			void draw();
+		};
+
 		class Screen
 		{
 		public:
-			Window header_line;
+			PropertyLine header_line;
 			Window surface;
 			LinePrinter message_line;
 

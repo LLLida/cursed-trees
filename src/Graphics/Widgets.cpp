@@ -73,10 +73,23 @@ namespace graphics
 		off(color);
 	}
 
+	widgets::PropertyLine::PropertyLine(int w, int y, int x)
+		: Window(1, w, y, x)
+	{
+		
+	}
+
+	void widgets::PropertyLine::draw()
+	{
+		for (auto&& [pos, str] : properties)
+			mvprint(0, pos, str);
+		refresh();
+	}
+
 	widgets::Screen::Screen()
-		: header_line{1, stdscr().width(), 0, 0}
-		, surface{stdscr().height() - 2, stdscr().width(), 1, 0}
-		, message_line{stdscr().width(), stdscr().height() - 1, 0}
+		: header_line(stdscr().width(), 0, 0)
+		, surface(stdscr().height() - 2, stdscr().width(), 1, 0)
+		, message_line(stdscr().width(), stdscr().height() - 1, 0)
 	{
 		
 	}
@@ -84,7 +97,7 @@ namespace graphics
 	void widgets::Screen::draw()
 	{
 		message_line.draw();
-		header_line.refresh();
+		header_line.draw();
 		surface.refresh();
 	}
 
