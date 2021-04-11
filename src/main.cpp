@@ -78,6 +78,10 @@ int main(int argc, char** argv)
 	displayer.pMagentaPair = &magenta;
 	displayer.pCyanPair = &cyan;
 	displayer.pWhitePair = &white;
+	displayer.scrollCallback = [&]() { 
+		header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
+	};
+	displayer.scroll(0, 0); /* show 'position' property by calling scrollCallback */
 
 	for (int i = 1; i < 13; i++)
 		game::Tree::spawn(world, i * 10);
@@ -120,25 +124,37 @@ int main(int argc, char** argv)
 					endline.print("Skipped 100 years.");
 					break;
 				case graphics::Key::i:
-					if (displayer.y == displayer.maxY()) endline.print("Top of world.");
+					if (displayer.y == displayer.maxY()) 
+					{
+						endline.print("Top of world.");
+						graphics::beep();
+					}
 					displayer.scroll(0, 1);
-					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
 					break;
 				case graphics::Key::k:
-					if (displayer.y == displayer.minY()) endline.print("Bottom of world.");
+					if (displayer.y == displayer.minY()) 
+					{
+						endline.print("Bottom of world.");
+						graphics::beep();
+					}
 					displayer.scroll(0, -1);
-					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
 					break;
 				case graphics::Key::j:
-					if (displayer.x == displayer.minX()) endline.print("Beginning of world.");
+					if (displayer.x == displayer.minX()) 
+					{
+						endline.print("Beginning of world.");
+						graphics::beep();
+					}
 					displayer.scroll(-1, 0);
-					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
 					break;
 				case graphics::Key::l:
-					if (displayer.x == displayer.maxX()) endline.print("End of world.");
+					if (displayer.x == displayer.maxX()) 
+					{
+						endline.print("End of world.");
+						graphics::beep();
+					}
 					displayer.scroll(1, 0);
-					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
-					break;
+ 					break;
 				default:
 					break;
 			}

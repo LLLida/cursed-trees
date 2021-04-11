@@ -2,6 +2,7 @@
 
 #include "../Graphics/Curses.hpp"
 
+#include <functional>
 #include <map>
 
 namespace game
@@ -31,11 +32,12 @@ namespace game
 		void operator()();
 
 		void scroll(int offsetX, int offsetY);
+		std::function<void()> scrollCallback;
 
 		[[nodiscard]]
 		constexpr int minX() const { return 0; }
-		[[nodiscard]]
-		constexpr int minY() const { return 0; }
+			[[nodiscard]]
+			constexpr int minY() const { return 0; }
 		[[nodiscard]]
 		int maxX() const;
 		[[nodiscard]]

@@ -328,4 +328,6 @@ namespace graphics
 	 */
 	[[nodiscard]]
 	Window stdscr();
+
+	void beep();
 }

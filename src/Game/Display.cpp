@@ -71,6 +71,7 @@ namespace game
 	{
 		x = std::min(std::max(minX(), x + offsetX), maxX());
 		y = std::min(std::max(minY(), y + offsetY), maxY());
+		if (scrollCallback) scrollCallback();
 	}
 
 	int Display<World>::maxX() const

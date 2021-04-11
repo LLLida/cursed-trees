@@ -167,4 +167,9 @@ namespace graphics
 	{
 		return Window(::stdscr);
 	}
+
+	void beep()
+	{
+		::beep();
+	}
 }
