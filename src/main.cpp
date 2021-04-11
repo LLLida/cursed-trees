@@ -127,6 +127,7 @@ int main()
 		{
 			header.properties[0] = fmt::format("Trees:[{:4}]", registry.size<game::Tree>());
 			header.properties[15] = fmt::format("Year:[{:5}]", numTicks++);
+			header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
 			if (!world.tick())
 			{
 				endline.on(magenta);
