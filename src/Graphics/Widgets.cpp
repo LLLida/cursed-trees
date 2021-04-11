@@ -81,8 +81,9 @@ namespace graphics
 
 	void widgets::PropertyLine::draw()
 	{
+		Window::clear();
 		for (auto&& [pos, str] : properties)
-			mvprint(0, pos, str);
+				mvprint(0, pos, str);
 		refresh();
 	}
 
