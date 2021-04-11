@@ -26,7 +26,7 @@ add_subdirectory(random)
 # json for serialization
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 set(JSON_MultipleHeaders ON)
-add_subdirectory(json)
+add_subdirectory(nlohmann_json-shrinked)
 
 # improve std::list performance
 add_subdirectory(Memory-Pool)

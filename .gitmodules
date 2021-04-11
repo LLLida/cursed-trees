@@ -10,3 +10,6 @@
 [submodule "random"]
 	path = random
 	url = https://github.com/effolkronium/random
+[submodule "nlohmann_json-shrinked"]
+	path = nlohmann_json-shrinked
+	url = https://github.com/LLLida/nlohmann_json-shrinked
