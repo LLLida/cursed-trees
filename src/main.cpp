@@ -101,6 +101,14 @@ int main()
 					dump_json(world);
 					endline.print("Dumped world to dump.json");
 					break;
+				case graphics::Key::S:
+					for (int i = 0; i < 100; i++)
+					{
+						world.tick();
+						numTicks++;
+					}
+					endline.print("Skipped 100 years.");
+					break;
 				default:
 					break;
 			}
