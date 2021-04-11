@@ -40,9 +40,10 @@ int main()
 
 	entt::registry registry;
 	game::World world{registry, 
-		static_cast<unsigned int>(window.width()), 
+		// static_cast<unsigned int>(window.width()),
+		200,
 		static_cast<unsigned int>(window.height())};
-	game::Display<game::World> displayer{world};
+	game::Display<game::World> displayer{world, window};
 
 	graphics::ColorPair black(graphics::Color::WHITE, graphics::Color::BLACK),
 		red(graphics::Color::WHITE, graphics::Color::RED), 
@@ -109,6 +110,14 @@ int main()
 					}
 					endline.print("Skipped 100 years.");
 					break;
+				case graphics::Key::j:
+					if (displayer.x == displayer.minX()) endline.print("Beginning of world.");
+					displayer.scroll(-1, 0);
+					break;
+				case graphics::Key::l:
+					if (displayer.x == displayer.maxX()) endline.print("End of world.");
+					displayer.scroll(1, 0);
+					break;
 				default:
 					break;
 			}
@@ -125,7 +134,7 @@ int main()
 			}	
 		}
 
-		displayer(window);
+		displayer();
 		gamescreen.draw();
 		std::this_thread::sleep_for(wait_time);
 	}

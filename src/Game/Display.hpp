@@ -15,6 +15,7 @@ namespace game
 	struct Display<World>
 	{
 		World& world;
+		graphics::Window& window;
 		int x, y;
 		graphics::ColorPair* pBlackPair = nullptr;
 		graphics::ColorPair* pRedPair = nullptr;
@@ -25,8 +26,19 @@ namespace game
 		graphics::ColorPair* pCyanPair = nullptr;
 		graphics::ColorPair* pWhitePair = nullptr;
 
-		Display(World& world);
+		Display(World& world, graphics::Window& win);
 
-		void operator()(graphics::Window& win);
+		void operator()();
+
+		void scroll(int offsetX, int offsetY);
+
+		[[nodiscard]]
+		constexpr int minX() const { return 0; }
+		[[nodiscard]]
+		constexpr int minY() const { return 0; }
+		[[nodiscard]]
+		int maxX() const;
+		[[nodiscard]]
+		int maxY() const;
 	};
 }

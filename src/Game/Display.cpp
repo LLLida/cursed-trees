@@ -5,13 +5,13 @@
 
 namespace game
 {
-	Display<World>::Display(World& world)
-		: world(world), x(0), y(0) {}
+	Display<World>::Display(World& world, graphics::Window& win)
+		: world(world), window(win), x(0), y(0) {}
 
-	void Display<World>::operator()(graphics::Window& win)
+	void Display<World>::operator()()
 	{
-		unsigned int w = std::min(static_cast<unsigned int>(win.width()), world.w);
-		unsigned int h = std::min(static_cast<unsigned int>(win.height()), world.h);
+		unsigned int w = static_cast<unsigned int>(window.width());
+		unsigned int h = static_cast<unsigned int>(window.height());
 		auto& reg = world.registry;
 		for (unsigned int i = 0; i < w; i++)
 		{
@@ -23,11 +23,11 @@ namespace game
 				{
 					if (pBlackPair)
 					{
-						win.on(*pBlackPair);
-						win.mvaddchar(h - j - 1, i, ' ');
-						win.off(*pBlackPair);
+						window.on(*pBlackPair);
+						window.mvaddchar(h - j - 1, i, ' ');
+						window.off(*pBlackPair);
 					}
-					else win.mvaddchar(h - j - 1, i, ' ');
+					else window.mvaddchar(h - j - 1, i, ' ');
 				}
 				else if (auto pCell = reg.try_get<Cell>(entity))
 				{
@@ -53,17 +53,33 @@ namespace game
 					else pColorPair = pWhitePair;
 					if (pColorPair)
 					{
-						win.on(*pColorPair);
+						window.on(*pColorPair);
 						if (pCell->type == Cell::Type::ACTIVE)
-							win.mvaddchar(h - j - 1, i, '$');
+							window.mvaddchar(h - j - 1, i, '$');
 						if (pCell->type == Cell::Type::DEAD)
-							win.mvaddchar(h - j - 1, i, ' ');
-						win.off(*pColorPair);
+							window.mvaddchar(h - j - 1, i, ' ');
+						window.off(*pColorPair);
 					}
-					else win.mvaddchar(h - j - 1, i, ' ');
+					else window.mvaddchar(h - j - 1, i, ' ');
 				}
 				else throw std::runtime_error("Found entity with undefined components!");
 			}
 		}
+	}
+
+	void Display<World>::scroll(int offsetX, int offsetY)
+	{
+		x = std::min(std::max(minX(), x + offsetX), maxX());
+		y = std::min(std::max(minY(), y + offsetY), maxY());
+	}
+
+	int Display<World>::maxX() const
+	{
+		return int(world.w) - window.width();
+	}
+
+	int Display<World>::maxY() const
+	{
+		return int(world.h) - window.height();
 	}
 }
