@@ -1,0 +1,15 @@
+[submodule "Memory-Pool"]
+	path = Memory-Pool
+	url = https://github.com/LLLida/Memory-Pool
+[submodule "entt"]
+	path = entt
+	url = https://github.com/skypjack/entt
+[submodule "fmt"]
+	path = fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "json"]
+	path = json
+	url = https://github.com/nlohmann/json
+[submodule "random"]
+	path = random
+	url = https://github.com/effolkronium/random
