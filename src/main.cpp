@@ -23,8 +23,17 @@ void dump_json(game::World& world)
 	out << json.dump(2);
 }
 
-int main()
+/// globals
+unsigned int worldW = 0, worldH = 0;
+
+int main(int argc, char** argv)
 {
+	if (argc == 3)
+	{
+		worldW = std::stoi(argv[1]);
+		worldH = std::stoi(argv[2]);
+	}
+
 	using namespace std::chrono;
 	const auto start_time = high_resolution_clock::now();
 
@@ -38,11 +47,11 @@ int main()
 	auto& header = gamescreen.header_line;
 	auto& endline = gamescreen.message_line;
 
+	if (worldW == 0) worldW = 200;
+	if (worldH == 0) worldH = static_cast<unsigned int>(window.height());
+
 	entt::registry registry;
-	game::World world{registry, 
-		// static_cast<unsigned int>(window.width()),
-		200,
-		static_cast<unsigned int>(window.height())};
+	game::World world{registry, worldW, worldH};
 	game::Display<game::World> displayer{world, window};
 
 	graphics::ColorPair black(graphics::Color::WHITE, graphics::Color::BLACK),
@@ -52,7 +61,7 @@ int main()
 		blue(graphics::Color::WHITE, graphics::Color::BLUE),
 		magenta(graphics::Color::WHITE, graphics::Color::MAGENTA),
 		cyan(graphics::Color::WHITE, graphics::Color::CYAN),
-		white(graphics::Color::BLACK, graphics::Color::WHITE);
+	white(graphics::Color::BLACK, graphics::Color::WHITE);
 
 	header.on(white);
 	header.background(white);
@@ -110,13 +119,25 @@ int main()
 					}
 					endline.print("Skipped 100 years.");
 					break;
+				case graphics::Key::i:
+					if (displayer.y == displayer.maxY()) endline.print("Top of world.");
+					displayer.scroll(0, 1);
+					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
+					break;
+				case graphics::Key::k:
+					if (displayer.y == displayer.minY()) endline.print("Bottom of world.");
+					displayer.scroll(0, -1);
+					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
+					break;
 				case graphics::Key::j:
 					if (displayer.x == displayer.minX()) endline.print("Beginning of world.");
 					displayer.scroll(-1, 0);
+					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
 					break;
 				case graphics::Key::l:
 					if (displayer.x == displayer.maxX()) endline.print("End of world.");
 					displayer.scroll(1, 0);
+					header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
 					break;
 				default:
 					break;
@@ -127,7 +148,6 @@ int main()
 		{
 			header.properties[0] = fmt::format("Trees:[{:4}]", registry.size<game::Tree>());
 			header.properties[15] = fmt::format("Year:[{:5}]", numTicks++);
-			header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
 			if (!world.tick())
 			{
 				endline.on(magenta);
