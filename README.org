@@ -1,6 +1,9 @@
 #+AUTHOR: Adil Mokhammad
 #+EMAIL: 0adilmohammad0@gmail.com
 #+LANGUAGE: en
+#+STARTUP: inlineimages
 
 * Cursed trees
+
+[[file:assets/screenshot.png]]
 
