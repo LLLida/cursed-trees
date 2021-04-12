@@ -125,6 +125,8 @@ int main(int argc, char** argv)
 					endline.print("Skipped 100 years.");
 					break;
 				case graphics::Key::S:
+					endline.print("Please, wait...");
+					endline.draw();
 					for (int i = 0; i < 1000; i++)
 					{
 						world.tick();
