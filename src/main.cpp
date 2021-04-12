@@ -23,8 +23,16 @@ void dump_json(game::World& world)
 	out << json.dump(2);
 }
 
+enum class Mode {
+	IDLE,
+	TICK
+};
+
 /// globals
 unsigned int worldW = 0, worldH = 0;
+bool running = true;
+Mode mode = Mode::IDLE;
+int numTicks = 0;
 
 int main(int argc, char** argv)
 {
@@ -86,13 +94,6 @@ int main(int argc, char** argv)
 	for (int i = 1; i < 13; i++)
 		game::Tree::spawn(world, i * 10);
 
-	enum class Mode {
-		IDLE,
-		TICK
-	};
-	bool running = true;
-	Mode mode = Mode::IDLE;
-	int numTicks = 0;
 	while(running)
 	{
 		milliseconds wait_time{200};
@@ -103,25 +104,33 @@ int main(int argc, char** argv)
 			{
 				case graphics::Key::q:
 					running = false;
-					break;
-				case graphics::Key::SPACE:
-					switch(mode)
-					{
-						case Mode::IDLE: mode = Mode::TICK; break;
-						case Mode::TICK: mode = Mode::IDLE; break;
-					}
+						break;
+					case graphics::Key::SPACE:
+						switch(mode)
+						{
+							case Mode::IDLE: mode = Mode::TICK; break;
+							case Mode::TICK: mode = Mode::IDLE; break;
+						}
 					break;
 				case graphics::Key::D:
 					dump_json(world);
 					endline.print("Dumped world to dump.json");
 					break;
-				case graphics::Key::S:
+				case graphics::Key::s:
 					for (int i = 0; i < 100; i++)
 					{
 						world.tick();
 						numTicks++;
 					}
 					endline.print("Skipped 100 years.");
+					break;
+				case graphics::Key::S:
+					for (int i = 0; i < 1000; i++)
+					{
+						world.tick();
+						numTicks++;
+					}
+					endline.print("Skipped 1000 years.");
 					break;
 				case graphics::Key::i:
 					if (displayer.y == displayer.maxY()) 
@@ -168,7 +177,7 @@ int main(int argc, char** argv)
 			{
 				endline.on(magenta);
 				endline.print("No life");
-			}	
+			}
 		}
 
 		displayer();
