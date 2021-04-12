@@ -166,6 +166,22 @@ int main(int argc, char** argv)
 					}
 					displayer.scroll(1, 0);
  					break;
+			case graphics::Key::u:
+					if (displayer.x < 10) 
+					{
+						endline.print("Beginning of world.");
+						graphics::beep();
+					}
+					displayer.scroll(-10, 0);
+ 					break;
+			case graphics::Key::o:
+				if (displayer.x > displayer.maxX()-10) 
+					{
+						endline.print("End of world.");
+						graphics::beep();
+					}
+					displayer.scroll(10, 0);
+ 					break;
 				default:
 					break;
 			}
