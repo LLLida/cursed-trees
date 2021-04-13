@@ -28,7 +28,7 @@ cmake --build . -j N # N is number of threads that will be used for build, 2-3 w
 
   By the moment the project is tested only on GNU/Linux but I suppose it will work on any Unix-like system.
 
-* TODO
+* todo
 
   + Saving/loading system
   + Embedding scripting language(lua?)
