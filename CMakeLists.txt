@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(cursed-trees)
+project(cursed-trees VERSION 0.1)
+set(default_build_type "Release")
 
 # Compiler flags
 set(CMAKE_CXX_STANDARD 20)
