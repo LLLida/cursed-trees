@@ -103,84 +103,84 @@ int main(int argc, char** argv)
 			wait_time = milliseconds{15}; /* sleep less when user pressed a key */
 			switch(*key)
 			{
-				case graphics::Key::q:
-					running = false;
-						break;
-					case graphics::Key::SPACE:
-						switch(mode)
-						{
-							case Mode::IDLE: mode = Mode::TICK; break;
-							case Mode::TICK: mode = Mode::IDLE; break;
-						}
-					break;
-				case graphics::Key::D:
-					dump_json(world);
-					endline.print("Dumped world to dump.json");
-					break;
-				case graphics::Key::s:
-					for (int i = 0; i < 100; i++)
-					{
-						world.tick(minSun, 3);
-						numTicks++;
-					}
-					endline.print("Skipped 100 years.");
-					break;
-				case graphics::Key::S:
-					endline.print("Please, wait...");
-					endline.draw();
-					for (int i = 0; i < 1000; i++)
-					{
-						world.tick(minSun, 3);
-						numTicks++;
-					}
-					endline.print("Skipped 1000 years.");
-					break;
-				case graphics::Key::i:
-					if (displayer.y == displayer.maxY()) 
-					{
-						endline.print("Top of world.");
-						graphics::beep();
-					}
-					displayer.scroll(0, 1);
-					break;
-				case graphics::Key::k:
-					if (displayer.y == displayer.minY()) 
-					{
-						endline.print("Bottom of world.");
-						graphics::beep();
-					}
-					displayer.scroll(0, -1);
-					break;
-				case graphics::Key::j:
-					if (displayer.x == displayer.minX()) 
-					{
-						endline.print("Beginning of world.");
-						graphics::beep();
-					}
-					displayer.scroll(-1, 0);
-					break;
-				case graphics::Key::l:
-					if (displayer.x == displayer.maxX()) 
-					{
-						endline.print("End of world.");
-						graphics::beep();
-					}
-					displayer.scroll(1, 0);
- 					break;
+			case graphics::Key::q:
+				running = false;
+				break;
+			case graphics::Key::SPACE:
+				switch(mode)
+				{
+				case Mode::IDLE: mode = Mode::TICK; break;
+				case Mode::TICK: mode = Mode::IDLE; break;
+				}
+				break;
+			case graphics::Key::D:
+				dump_json(world);
+				endline.print("Dumped world to dump.json");
+				break;
+			case graphics::Key::s:
+				for (int i = 0; i < 100; i++)
+				{
+					world.tick(minSun, 3);
+					numTicks++;
+				}
+				endline.print("Skipped 100 years.");
+				break;
+			case graphics::Key::S:
+				endline.print("Please, wait...");
+				endline.draw();
+				for (int i = 0; i < 1000; i++)
+				{
+					world.tick(minSun, 3);
+					numTicks++;
+				}
+				endline.print("Skipped 1000 years.");
+				break;
+			case graphics::Key::i:
+				if (displayer.y == displayer.maxY()) 
+				{
+					endline.print("Top of world.");
+					graphics::beep();
+				}
+				displayer.scroll(0, 1);
+				break;
+			case graphics::Key::k:
+				if (displayer.y == displayer.minY()) 
+				{
+					endline.print("Bottom of world.");
+					graphics::beep();
+				}
+				displayer.scroll(0, -1);
+				break;
+			case graphics::Key::j:
+				if (displayer.x == displayer.minX()) 
+				{
+					endline.print("Beginning of world.");
+					graphics::beep();
+				}
+				displayer.scroll(-1, 0);
+				break;
+			case graphics::Key::l:
+				if (displayer.x == displayer.maxX())
+				{
+					endline.print("End of world.");
+					graphics::beep();
+				}
+				displayer.scroll(1, 0);
+				break;
 			case graphics::Key::u:
-					if (displayer.x < 10) 
-					{
-						endline.print("Beginning of world.");
-						graphics::beep();
-					}
-					displayer.scroll(-10, 0);
- 					break;
+				if (displayer.x < 10) 
+				{
+					endline.print("Beginning of world.");
+					graphics::beep();
+				}
+				displayer.scroll(-10, 0);
+				break;
 			case graphics::Key::o:
 				if (displayer.x > displayer.maxX()-10) 
-					{
-						endline.print("End of world.");
-						graphics::beep();
-					}
+				{
+					endline.print("End of world.");
+					graphics::beep();
+				}
 				displayer.scroll(10, 0);
 				break;
 			case graphics::Key::PLUS:
@@ -212,7 +212,7 @@ int main(int argc, char** argv)
 		std::this_thread::sleep_for(wait_time);
 	}
 
-	endline.print("Ended in {}", duration_cast<seconds>(high_resolution_clock::now() - start_time));
+	endline.print("Ended in {}.", duration_cast<seconds>(high_resolution_clock::now() - start_time));
 	endline.draw(red);
 
 	scr.nodelay(false);
