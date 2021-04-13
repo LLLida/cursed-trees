@@ -1,0 +1,9 @@
+#+AUTHOR: Adil Mokhammad
+#+EMAIL: 0adilmohammad0@gmail.com
+#+LANGUAGE: en
+
+* Graphics module
+
+  Code in this directory is a thin ncurses wrapper.
+  + =Curses.hpp/cpp= - ncurses wrapper.
+  + =Widgets.hpp/cpp= - some classes for TUI.

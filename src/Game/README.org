@@ -1,0 +1,14 @@
+#+AUTHOR: Adil Mokhammad
+#+EMAIL: 0adilmohammad0@gmail.com
+#+LANGUAGE: en
+
+* Game module
+
+  This directory describes main logic of the simulation. It heavily uses ECS provided by =entt=.
+
+  + =Components.hpp= describes components which will be used.
+  + =Genetic.hpp/cpp= describes genom of trees.
+  + =Tree.hpp/cpp= describes tree component and contains functions to work with trees.
+  + =World.hpp/cpp= contains world class with functions to work with it.
+  + =Display.hpp/cpp= depends on Graphics module. Contains functions to render the world.
+  + =Serialization.hpp/cpp= to_json serialization functions.
