@@ -112,6 +112,8 @@ namespace graphics
 		_9 = '9',
 		_0 = '0',
 		SPACE = ' ',
+		PLUS = '+',
+		MINUS = '-',
 		CODE_YES	= 0400,
 		MIN		= 0401,
 		BREAK	= 0401,

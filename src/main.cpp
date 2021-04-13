@@ -33,6 +33,7 @@ unsigned int worldW = 0, worldH = 0;
 bool running = true;
 Mode mode = Mode::IDLE;
 int numTicks = 0;
+unsigned int minSun = 5;
 
 int main(int argc, char** argv)
 {
@@ -119,7 +120,7 @@ int main(int argc, char** argv)
 				case graphics::Key::s:
 					for (int i = 0; i < 100; i++)
 					{
-						world.tick();
+						world.tick(minSun, 3);
 						numTicks++;
 					}
 					endline.print("Skipped 100 years.");
@@ -129,7 +130,7 @@ int main(int argc, char** argv)
 					endline.draw();
 					for (int i = 0; i < 1000; i++)
 					{
-						world.tick();
+						world.tick(minSun, 3);
 						numTicks++;
 					}
 					endline.print("Skipped 1000 years.");
@@ -180,10 +181,18 @@ int main(int argc, char** argv)
 						endline.print("End of world.");
 						graphics::beep();
 					}
-					displayer.scroll(10, 0);
- 					break;
-				default:
-					break;
+				displayer.scroll(10, 0);
+				break;
+			case graphics::Key::PLUS:
+				minSun++;
+				endline.print("Sun's energy is now {}.", minSun);
+				break;
+			case graphics::Key::MINUS:
+				minSun--;
+				endline.print("Sun's energy is now {}.", minSun);
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -191,7 +200,7 @@ int main(int argc, char** argv)
 		{
 			header.properties[0] = fmt::format("Trees:[{:4}]", registry.size<game::Tree>());
 			header.properties[15] = fmt::format("Year:[{:5}]", numTicks++);
-			if (!world.tick())
+			if (!world.tick(minSun, 3))
 			{
 				endline.on(magenta);
 				endline.print("No life");

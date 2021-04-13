@@ -26,6 +26,6 @@ namespace game
 		void sun(unsigned int min, unsigned int levels);
 		void physics();
 		void growTrees();
-		bool tick();
+		bool tick(unsigned int min, unsigned int levels);
 	};
 }

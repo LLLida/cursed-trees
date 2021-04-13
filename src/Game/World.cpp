@@ -90,11 +90,11 @@ namespace game
 		}
 	}
 
-	bool World::tick()
+	bool World::tick(unsigned int min, unsigned int levels)
 	{
 		physics();
 		growTrees();
-		sun(5, 3);
+		sun(min, levels);
 		return registry.size<Tree>() > 0;
 	}
 }
