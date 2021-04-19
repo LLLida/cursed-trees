@@ -1,7 +1,7 @@
 
 #include "Game/World.hpp"
-#include "Game/Display.hpp"
 #include "Game/Serialization.hpp"
+#include "Game/Renderer.hpp"
 #include "Graphics/Widgets.hpp"
 
 #include <entt/entity/handle.hpp>
@@ -26,6 +26,37 @@ void dump_json(game::World& world)
 enum class Mode {
 	IDLE,
 	TICK
+};
+
+struct CursesDisplayer
+{
+	CursesDisplayer(graphics::Window& window)
+		: window(window), pColorPairs() {}
+
+	graphics::Window& window;
+	graphics::ColorPair* pColorPairs[8];
+
+	graphics::ColorPair*& pBlackPair() { return pColorPairs[0]; };
+	graphics::ColorPair*& pRedPair() { return pColorPairs[1]; };
+	graphics::ColorPair*& pGreenPair() { return pColorPairs[2]; };
+	graphics::ColorPair*& pYellowPair() { return pColorPairs[3]; };
+	graphics::ColorPair*& pBluePair() { return pColorPairs[4]; };
+	graphics::ColorPair*& pMagentaPair() { return pColorPairs[5]; };
+	graphics::ColorPair*& pCyanPair() { return pColorPairs[6]; };
+	graphics::ColorPair*& pWhitePair() { return pColorPairs[7]; };
+
+	int width() const { return window.width(); }
+	int height() const { return window.height(); }
+	void begin() {}
+	void end() {}
+	void draw(unsigned y, unsigned x, char ch, unsigned color)
+	{
+		auto& colorPair = *pColorPairs[color];
+		window.on(colorPair);
+		window.mvaddchar(y, x, ch);
+		window.off(colorPair);
+	}
+	std::function<void()> onScroll;
 };
 
 /// globals
@@ -61,7 +92,7 @@ int main(int argc, char** argv)
 
 	entt::registry registry;
 	game::World world{registry, worldW, worldH};
-	game::Display<game::World> displayer{world, window};
+	game::Renderer<CursesDisplayer> renderer{world, CursesDisplayer{window}};
 
 	graphics::ColorPair black(graphics::Color::WHITE, graphics::Color::BLACK),
 		red(graphics::Color::WHITE, graphics::Color::RED), 
@@ -70,7 +101,7 @@ int main(int argc, char** argv)
 		blue(graphics::Color::WHITE, graphics::Color::BLUE),
 		magenta(graphics::Color::WHITE, graphics::Color::MAGENTA),
 		cyan(graphics::Color::WHITE, graphics::Color::CYAN),
-	white(graphics::Color::BLACK, graphics::Color::WHITE);
+		white(graphics::Color::BLACK, graphics::Color::WHITE);
 
 	header.on(white);
 	header.background(white);
@@ -79,18 +110,18 @@ int main(int argc, char** argv)
 	endline.background(white);
 	endline.print("Hello world");
 
-	displayer.pBlackPair = &black;
-	displayer.pRedPair = &red;
-	displayer.pGreenPair = &green;
-	displayer.pYellowPair = &yellow;
-	displayer.pBluePair = &blue;
-	displayer.pMagentaPair = &magenta;
-	displayer.pCyanPair = &cyan;
-	displayer.pWhitePair = &white;
-	displayer.scrollCallback = [&]() { 
-		header.properties[30] = fmt::format("Position:[{:3}, {:3}]", displayer.x, displayer.y);
+	renderer.pBlackPair() = &black;
+	renderer.pRedPair() = &red;
+	renderer.pGreenPair() = &green;
+	renderer.pYellowPair() = &yellow;
+	renderer.pBluePair() = &blue;
+	renderer.pMagentaPair() = &magenta;
+	renderer.pCyanPair() = &cyan;
+	renderer.pWhitePair() = &white;
+	renderer.onScroll = [&]() { 
+		header.properties[30] = fmt::format("Position:[{:3}, {:3}]", renderer.x, renderer.y);
 	};
-	displayer.scroll(0, 0); /* show 'position' property by calling scrollCallback */
+	renderer.scroll(0, 0); /* show 'position' property by calling onScroll */
 
 	for (int i = 1; i < 13; i++)
 		game::Tree::spawn(world, i * 10);
@@ -136,54 +167,54 @@ int main(int argc, char** argv)
 				endline.print("Skipped 1000 years.");
 				break;
 			case graphics::Key::i:
-				if (displayer.y == displayer.maxY()) 
+				if (renderer.y == renderer.maxY()) 
 				{
 					endline.print("Top of world.");
 					graphics::beep();
 				}
-				displayer.scroll(0, 1);
+				renderer.scroll(0, 1);
 				break;
 			case graphics::Key::k:
-				if (displayer.y == displayer.minY()) 
+				if (renderer.y == renderer.minY()) 
 				{
 					endline.print("Bottom of world.");
 					graphics::beep();
 				}
-				displayer.scroll(0, -1);
+				renderer.scroll(0, -1);
 				break;
 			case graphics::Key::j:
-				if (displayer.x == displayer.minX()) 
+				if (renderer.x == renderer.minX()) 
 				{
 					endline.print("Beginning of world.");
 					graphics::beep();
 				}
-				displayer.scroll(-1, 0);
+				renderer.scroll(-1, 0);
 				break;
 			case graphics::Key::l:
-				if (displayer.x == displayer.maxX())
+				if (renderer.x == renderer.maxX())
 				{
 					endline.print("End of world.");
 					graphics::beep();
 				}
-				displayer.scroll(1, 0);
+				renderer.scroll(1, 0);
 				break;
-			case graphics::Key::u:
-				if (displayer.x < 10) 
-				{
-					endline.print("Beginning of world.");
-					graphics::beep();
-				}
-				displayer.scroll(-10, 0);
-				break;
-			case graphics::Key::o:
-				if (displayer.x > displayer.maxX()-10) 
-				{
-					endline.print("End of world.");
-					graphics::beep();
-				}
-				displayer.scroll(10, 0);
-				break;
-			case graphics::Key::PLUS:
+				case graphics::Key::u:
+					if (renderer.x < 10) 
+					{
+						endline.print("Beginning of world.");
+						graphics::beep();
+					}
+					renderer.scroll(-10, 0);
+					break;
+				case graphics::Key::o:
+					if (renderer.x > renderer.maxX()-10) 
+					{
+						endline.print("End of world.");
+						graphics::beep();
+					}
+					renderer.scroll(10, 0);
+					break;
+				case graphics::Key::PLUS:
 				minSun++;
 				endline.print("Sun's energy is now {}.", minSun);
 				break;
@@ -207,7 +238,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		displayer();
+		renderer.render();
 		gamescreen.draw();
 		std::this_thread::sleep_for(wait_time);
 	}

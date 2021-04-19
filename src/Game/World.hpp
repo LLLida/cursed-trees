@@ -2,8 +2,6 @@
 
 #include "Tree.hpp"
 
-#include <array>
-
 #include <entt/entity/fwd.hpp>
 
 namespace game
@@ -11,7 +9,7 @@ namespace game
 	class World
 	{
 	private:
-		entt::entity* const field;
+		entt::entity* field;
 
 	public:
 		entt::registry& registry;
@@ -19,7 +17,9 @@ namespace game
 		const unsigned int h;
 
 		World(entt::registry& registry, unsigned int w, unsigned int h);
-		~World();
+		~World() noexcept;
+		World(World&& world) noexcept;
+		World& operator=(World&& world) noexcept;
 
 		entt::entity at(Vector2 pos) const;
 

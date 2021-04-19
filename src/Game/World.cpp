@@ -15,12 +15,28 @@ namespace game
 			field[i] = registry.create();
 	}
 
-	World::~World()
+	World::~World() noexcept
 	{
-		registry.clear<Tree>();
-		for (unsigned int i = 0; i < w * h; i++)
-			registry.destroy(field[i]);
-		delete[] field;
+		if (field)
+		{
+			registry.clear<Tree>();
+			for (unsigned int i = 0; i < w * h; i++)
+				registry.destroy(field[i]);
+			delete[] field;
+		}
+	}
+
+	World::World(World&& world) noexcept
+		: field(world.field), registry(world.registry), w(world.w), h(world.h)
+	{
+		world.field = nullptr;
+	}
+
+	World& World::operator=(World&& world) noexcept
+	{
+		this->~World();
+		new(this) World(std::move(world));
+		return *this;
 	}
 
 	entt::entity World::at(Vector2 pos) const
