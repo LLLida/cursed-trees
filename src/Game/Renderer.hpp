@@ -51,16 +51,16 @@ namespace game
 					{
 						displayer_type::draw(h - j - 1, i, ' ', 0); /* draw black tile */
 					}
-					else if (auto pCell = reg.try_get<Cell>(entity))
+					else if (auto pCell = reg.template try_get<Cell>(entity))
 					{
-						if (auto pLiving = reg.try_get<Living>(pCell->parent))	
+						if (auto pLiving = reg.template try_get<Living>(pCell->parent))	
 						{
 							/* draw colorful tile */
 							if (pCell->type == Cell::Type::ACTIVE)
 								displayer_type::draw(h - j - 1, i, '$', pLiving->colorIndex);
 							else displayer_type::draw(h - j - 1, i, ' ', pLiving->colorIndex);
 						}
-						else displayer_type::draw(h - j - 1, i, ' ', 7); /* draw white tile */
+						else displayer_type::draw(h - j - 1, i, '$', 7); /* draw white tile */
 					}
 					else throw std::runtime_error("Found entity with undefined components!");
 				}
