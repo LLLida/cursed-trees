@@ -28,6 +28,9 @@ namespace game
 		Renderer(World& world, const D& d)
 			: D(d), world(world), x(0), y(0) {}
 
+		Renderer(World& world, D&& d)
+			: D(std::move(d)), world(world), x(0), y(0) {}
+
 		void scroll(int offsetX, int offsetY)
 		{
 			x = std::min(std::max(minX(), x + offsetX), maxX());
