@@ -40,8 +40,8 @@ namespace game
 
 		void render()
 		{
-			unsigned int w = displayer_type::width();
-			unsigned int h = displayer_type::height();
+			unsigned int w = std::min(unsigned(displayer_type::width()), world.w-x);
+			unsigned int h = std::min(unsigned(displayer_type::height()), world.h-y);
 			auto& reg = world.registry;
 			displayer_type::begin();
 			for (unsigned int i = 0; i < w; i++)
