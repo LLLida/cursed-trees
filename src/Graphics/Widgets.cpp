@@ -102,6 +102,17 @@ namespace graphics
 		surface.refresh();
 	}
 
+	void widgets::Screen::resize()
+	{
+		auto w = stdscr().width();
+		auto h = stdscr().height();
+		header_line.resize(1, w);
+		surface.resize(h - 2, w);
+		message_line.move(h -1, 0);
+		message_line.resize(1, w);
+		message_line.print("Resized screen to [{}, {}].", w, h);
+	}
+
 	widgets::VerticalScrollBar::VerticalScrollBar(int height, int y, int x)
 		: Window(height, 1, y, x)
 		, changed(false)

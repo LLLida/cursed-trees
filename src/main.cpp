@@ -88,11 +88,11 @@ int main(int argc, char** argv)
 	auto& endline = gamescreen.message_line;
 
 	if (worldW == 0) worldW = 200;
-	if (worldH == 0) worldH = static_cast<unsigned int>(window.height());
+	if (worldH == 0) worldH = 50;
 
 	entt::registry registry;
 	game::World world{registry, worldW, worldH};
-	game::Renderer<CursesDisplayer> renderer{world, CursesDisplayer{window}};
+	game::Renderer renderer{world, CursesDisplayer{window}};
 
 	graphics::ColorPair black(graphics::Color::WHITE, graphics::Color::BLACK),
 		red(graphics::Color::WHITE, graphics::Color::RED), 
@@ -137,11 +137,14 @@ int main(int argc, char** argv)
 			case graphics::Key::q:
 				running = false;
 				break;
+			case graphics::Key::RESIZE:
+				gamescreen.resize();
+				break;
 			case graphics::Key::SPACE:
 				switch(mode)
 				{
-				case Mode::IDLE: mode = Mode::TICK; break;
-				case Mode::TICK: mode = Mode::IDLE; break;
+					case Mode::IDLE: mode = Mode::TICK; break;
+					case Mode::TICK: mode = Mode::IDLE; break;
 				}
 				break;
 			case graphics::Key::D:

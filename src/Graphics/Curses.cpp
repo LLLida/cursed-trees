@@ -163,6 +163,16 @@ namespace graphics
 		wclear(win);
 	}
 
+	void Window::move(int y, int x)
+	{
+		mvwin(win, y, x);
+	}
+
+	void Window::resize(int h, int w)
+	{
+		wresize(win, h, w);
+	}
+
 	Window stdscr()
 	{
 		return Window(::stdscr);

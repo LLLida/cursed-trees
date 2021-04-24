@@ -321,6 +321,8 @@ namespace graphics
 		void nodelay(bool enable);
 		void border(const Border& border);
 		void clear();
+		void move(int y, int x);
+		void resize(int h, int w);
 
 		friend Window stdscr();
 	};

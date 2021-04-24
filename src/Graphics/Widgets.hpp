@@ -64,6 +64,8 @@ namespace graphics
 			Screen();
 
 			void draw();
+
+			void resize();
 		};
 
 		class VerticalScrollBar : public Window
