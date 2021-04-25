@@ -68,10 +68,51 @@ unsigned int minSun = 5;
 
 int main(int argc, char** argv)
 {
-	if (argc == 3)
+	if (argc == 2)
 	{
-		worldW = std::stoi(argv[1]);
-		worldH = std::stoi(argv[2]);
+		std::string_view arg = argv[1];
+		if (arg == "--help")
+			fmt::print(R"(
+cursed-trees is simple tree evolution simulation.
+For details see github repo: https://github.com/LLLida/cursed-trees
+License: GPLv3.
+
+options:
+    --help                        Prints this message.
+    <unsigned int> <unsigned int> Sets world's width(by default 200)
+                                  and height(by default 50) respectively.
+)");
+		else if (arg == "--version")
+			fmt::print(R"(
+cursed-trees version is 1.0. Built in {}.
+Copyright (C) 2021  Adil Mokhammad
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+)", __DATE__);
+		else fmt::print("Unrecognized option. Use --help to get more info.");
+		return 0;
+	}
+	else if (argc == 3)
+	{
+		try {
+			worldW = std::stoi(argv[1]);
+			worldH = std::stoi(argv[2]);	
+		} catch (const std::invalid_argument& err)
+		{
+			fmt::print("Arguments {} and {} could not be converted to integers."
+					"Use --help option to get more info", argv[1], argv[2]);
+		}
 	}
 
 	using namespace std::chrono;
