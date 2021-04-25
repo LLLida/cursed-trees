@@ -32,6 +32,11 @@ add_subdirectory(nlohmann_json-shrinked)
 # improve std::list performance
 add_subdirectory(Memory-Pool)
 
+# command line arguments parsing
+set(ARGS_BUILD_EXAMPLE OFF)
+set(ARGS_BUILD_UNITTESTS OFF)
+add_subdirectory(args)
+
 add_executable(${PROJECT_NAME} "src/main.cpp"
   "src/Graphics/Curses.cpp" "src/Graphics/Widgets.cpp"
   "src/Game/Genetic.cpp" "src/Game/Tree.cpp" "src/Game/World.cpp" "src/Game/Serialization.cpp")
@@ -41,6 +46,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   EnTT::EnTT 
   effolkronium_random 
   nlohmann_json::nlohmann_json 
-  lida::Memory-Pool 
+  lida::Memory-Pool
+  args
   ${CURSES_LIBRARIES})
-

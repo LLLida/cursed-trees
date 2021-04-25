@@ -13,3 +13,6 @@
 [submodule "nlohmann_json-shrinked"]
 	path = nlohmann_json-shrinked
 	url = https://github.com/LLLida/nlohmann_json-shrinked
+[submodule "args"]
+	path = args
+	url = https://github.com/Taywee/args.git

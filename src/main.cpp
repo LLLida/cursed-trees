@@ -4,10 +4,12 @@
 #include "Game/Renderer.hpp"
 #include "Graphics/Widgets.hpp"
 
+#include <args.hxx>
 #include <entt/entity/handle.hpp>
 #include <entt/entity/registry.hpp>
 #include <fstream>
 #include <fmt/chrono.h>
+#include <fmt/ostream.h>
 #include <nlohmann/json.hpp>
 #include <thread>
 
@@ -66,55 +68,12 @@ Mode mode = Mode::IDLE;
 int numTicks = 0;
 unsigned int minSun = 5;
 
+static int parseArguments(int argc, char** argv);
+
 int main(int argc, char** argv)
 {
-	if (argc == 2)
-	{
-		std::string_view arg = argv[1];
-		if (arg == "--help")
-			fmt::print(R"(
-cursed-trees is simple tree evolution simulation.
-For details see github repo: https://github.com/LLLida/cursed-trees
-License: GPLv3.
-
-options:
-    --help                        Prints this message.
-    <unsigned int> <unsigned int> Sets world's width(by default 200)
-                                  and height(by default 50) respectively.
-)");
-		else if (arg == "--version")
-			fmt::print(R"(
-cursed-trees version is 1.0. Built in {}.
-Copyright (C) 2021  Adil Mokhammad
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-)", __DATE__);
-		else fmt::print("Unrecognized option. Use --help to get more info.");
+	if (parseArguments(argc, argv))
 		return 0;
-	}
-	else if (argc == 3)
-	{
-		try {
-			worldW = std::stoi(argv[1]);
-			worldH = std::stoi(argv[2]);	
-		} catch (const std::invalid_argument& err)
-		{
-			fmt::print("Arguments {} and {} could not be converted to integers."
-					"Use --help option to get more info", argv[1], argv[2]);
-		}
-	}
-
 	using namespace std::chrono;
 	const auto start_time = high_resolution_clock::now();
 
@@ -211,6 +170,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 				endline.print("Skipped 1000 years.");
 				break;
 			case graphics::Key::i:
+			case graphics::Key::UP:
 				if (renderer.y == renderer.maxY()) 
 				{
 					endline.print("Top of world.");
@@ -219,6 +179,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 				renderer.scroll(0, 1);
 				break;
 			case graphics::Key::k:
+			case graphics::Key::DOWN:
 				if (renderer.y == renderer.minY()) 
 				{
 					endline.print("Bottom of world.");
@@ -227,6 +188,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 				renderer.scroll(0, -1);
 				break;
 			case graphics::Key::j:
+			case graphics::Key::LEFT:
 				if (renderer.x == renderer.minX()) 
 				{
 					endline.print("Beginning of world.");
@@ -235,6 +197,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 				renderer.scroll(-1, 0);
 				break;
 			case graphics::Key::l:
+			case graphics::Key::RIGHT:
 				if (renderer.x == renderer.maxX())
 				{
 					endline.print("End of world.");
@@ -242,23 +205,23 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 				}
 				renderer.scroll(1, 0);
 				break;
-				case graphics::Key::u:
-					if (renderer.x < 10) 
-					{
-						endline.print("Beginning of world.");
-						graphics::beep();
-					}
-					renderer.scroll(-10, 0);
+			case graphics::Key::u:
+				if (renderer.x < 10) 
+				{
+					endline.print("Beginning of world.");
+					graphics::beep();
+				}
+				renderer.scroll(-10, 0);
+				break;
+			case graphics::Key::o:
+				if (renderer.x > renderer.maxX()-10) 
+				{
+					endline.print("End of world.");
+					graphics::beep();
+				}
+				renderer.scroll(10, 0);
 					break;
-				case graphics::Key::o:
-					if (renderer.x > renderer.maxX()-10) 
-					{
-						endline.print("End of world.");
-						graphics::beep();
-					}
-					renderer.scroll(10, 0);
-					break;
-				case graphics::Key::PLUS:
+			case graphics::Key::PLUS:
 				minSun++;
 				endline.print("Sun's energy is now {}.", minSun);
 				break;
@@ -294,5 +257,80 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	scr.getkey();
 		
 	graphics::shutdown();
+	return 0;
+}
+
+static int parseArguments(int argc, char** argv)
+{
+	args::ArgumentParser parser(
+		"cursed-trees is tree evolution simulation with tui.\n"
+		"CONTROLS:\n"
+		"   [q]: quit the program\n"
+		"   [<space>]: pause the program\n"
+		"   [<up arrow>, i]: scroll screen up by 1 char\n"
+		"   [<left arrow>, j]: scroll screen left by 1 char\n"
+		"   [<down arrow>, k]: scroll screen down by 1 char\n"
+		"   [<right arrow>, l]: scroll screen right by 1 char\n"
+		"   [u]: scroll screen left by 10 chars\n"
+		"   [o]: scroll screen right by 10 chars\n"
+        "   [-]: reduce sun's energy by 1\n"
+        "   [+]: increase sun's energy by 1\n"
+        "   [s]: skip 100 years\n"
+        "   [S]: skip 1000 years", 
+		"If you encounter any bug please add issue to the github repo: https://github.com/LLLida/cursed-trees\n"
+		"or leave me email: 0adilmohammad0@gmail.com.");
+	args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
+	args::CompletionFlag completion(parser, {"complete"});
+	args::Flag printVersion(parser, "version", "Display version message", {'v', "version"});
+	args::ValueFlag<unsigned int> minSunFlag(parser, "0..20", "Set minimal sun energy", {"min-sun"});
+	args::ValueFlag<unsigned int> worldWFlag(parser, "number of chars", "world's width", {'w', "width"});
+	args::ValueFlag<unsigned int> worldHFlag(parser, "number of chars", "world's height", {'w', "height"});
+	try
+	{
+		parser.ParseCLI(argc, argv);
+	}
+	catch (const args::Completion& e)
+	{
+		fmt::print(e.what());
+		return 0;
+	}
+	catch (const args::Help&)
+	{
+		fmt::print("{}", parser);
+		return 1;
+	}
+	catch (const args::ParseError& e)
+	{
+		fmt::print("{}\n{}", e.what(), parser);
+		return 1;
+    }
+	catch (const args::ValidationError& e)
+	{
+		fmt::print("{}\n{}", e.what(), parser);
+	}
+	if (printVersion)
+	{
+		fmt::print(R"(
+cursed-trees version is 1.0. Built in {}.
+Copyright (C) 2021  Adil Mokhammad
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+)", __DATE__);
+		return 1;
+	}
+	if (minSunFlag) minSun = args::get(minSunFlag);
+	if (worldWFlag) worldW = args::get(worldWFlag);
+	if (worldHFlag) worldH = args::get(worldHFlag);
 	return 0;
 }
