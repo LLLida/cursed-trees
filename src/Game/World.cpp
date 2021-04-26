@@ -48,7 +48,7 @@ namespace game
 		return field[pos.y * w + pos.x];
 	}
 
-	void World::sun(unsigned int min, unsigned int levels)
+	void World::sun(int min, unsigned int levels)
 	{
 		for (unsigned int x = 0; x < w; x++)
 		{
@@ -106,7 +106,7 @@ namespace game
 		}
 	}
 
-	bool World::tick(unsigned int min, unsigned int levels)
+	bool World::tick(int min, unsigned int levels)
 	{
 		physics();
 		growTrees();

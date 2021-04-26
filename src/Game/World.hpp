@@ -23,9 +23,9 @@ namespace game
 
 		entt::entity at(Vector2 pos) const;
 
-		void sun(unsigned int min, unsigned int levels);
+		void sun(int min, unsigned int levels);
 		void physics();
 		void growTrees();
-		bool tick(unsigned int min, unsigned int levels);
+		bool tick(int min, unsigned int levels);
 	};
 }

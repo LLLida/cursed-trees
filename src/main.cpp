@@ -66,7 +66,7 @@ unsigned int worldW = 0, worldH = 0;
 bool running = true;
 Mode mode = Mode::IDLE;
 int numTicks = 0;
-unsigned int minSun = 5;
+int minSun = 5;
 
 static int parseArguments(int argc, char** argv);
 
@@ -282,7 +282,7 @@ static int parseArguments(int argc, char** argv)
 	args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
 	args::CompletionFlag completion(parser, {"complete"});
 	args::Flag printVersion(parser, "version", "Display version message", {'v', "version"});
-	args::ValueFlag<unsigned int> minSunFlag(parser, "0..20", "Set minimal sun energy", {"min-sun"});
+	args::ValueFlag<int> minSunFlag(parser, "0..20", "Set minimal sun energy", {"min-sun"});
 	args::ValueFlag<unsigned int> worldWFlag(parser, "number of chars", "world's width", {'w', "width"});
 	args::ValueFlag<unsigned int> worldHFlag(parser, "number of chars", "world's height", {'w', "height"});
 	try
