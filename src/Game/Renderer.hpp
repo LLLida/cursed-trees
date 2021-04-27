@@ -38,34 +38,65 @@ namespace game
 			displayer_type::onScroll();	
 		}
 
-		void render()
+		void render(bool energyMode)
 		{
 			unsigned int w = std::min(unsigned(displayer_type::width()), world.w-x);
 			unsigned int h = std::min(unsigned(displayer_type::height()), world.h-y);
 			auto& reg = world.registry;
 			displayer_type::begin();
-			for (unsigned int i = 0; i < w; i++)
+			if (energyMode)
 			{
-				for (unsigned int j = 0; j < h; j++)
+				for (unsigned int i = 0; i < w; i++)
 				{
-					Vector2 pos{x + i, y + j};
-					entt::entity entity = world.at(pos);
-					if (reg.orphan(entity))
+					for (unsigned int j = 0; j < h; j++)
 					{
-						displayer_type::draw(h - j - 1, i, ' ', 0); /* draw black tile */
-					}
-					else if (auto pCell = reg.template try_get<Cell>(entity))
-					{
-						if (auto pLiving = reg.template try_get<Living>(pCell->parent))	
+						Vector2 pos{x + i, y + j};
+						entt::entity entity = world.at(pos);
+						if (reg.orphan(entity))
 						{
-							/* draw colorful tile */
-							if (pCell->type == Cell::Type::ACTIVE)
-								displayer_type::draw(h - j - 1, i, '$', pLiving->colorIndex);
-							else displayer_type::draw(h - j - 1, i, ' ', pLiving->colorIndex);
+							displayer_type::draw(h - j - 1, i, ' ', 0); /* draw black tile */
 						}
-						else displayer_type::draw(h - j - 1, i, '$', 7); /* draw white tile */
+						else if (auto pCell = reg.template try_get<Cell>(entity))
+						{
+							int energy = reg.template get<Tree>(pCell->parent).energy;
+							unsigned colorIndex = 4;
+							if (energy > 2500) colorIndex = 5;
+							else if (energy > 1500) colorIndex = 1;
+							else if (energy > 1000) colorIndex = 3;
+							else if (energy > 500) colorIndex = 2;
+							else if (energy > 150) colorIndex = 6;
+							char c = (pCell->type == Cell::Type::ACTIVE) ? '$' : ' ';
+							displayer_type::draw(h - j - 1, i, c, colorIndex); /* draw white tile */
+						}
+						else throw std::runtime_error("Found entity with undefined components!");
 					}
-					else throw std::runtime_error("Found entity with undefined components!");
+				}	
+			}
+			else
+			{
+				for (unsigned int i = 0; i < w; i++)
+				{
+					for (unsigned int j = 0; j < h; j++)
+					{
+						Vector2 pos{x + i, y + j};
+						entt::entity entity = world.at(pos);
+						if (reg.orphan(entity))
+						{
+							displayer_type::draw(h - j - 1, i, ' ', 0); /* draw black tile */
+						}
+						else if (auto pCell = reg.template try_get<Cell>(entity))
+						{
+							if (auto pLiving = reg.template try_get<Living>(pCell->parent))	
+							{
+								/* draw colorful tile */
+								if (pCell->type == Cell::Type::ACTIVE)
+									displayer_type::draw(h - j - 1, i, '$', pLiving->colorIndex);
+								else displayer_type::draw(h - j - 1, i, ' ', pLiving->colorIndex);
+							}
+							else displayer_type::draw(h - j - 1, i, '$', 7); /* draw white tile */
+						}
+						else throw std::runtime_error("Found entity with undefined components!");
+					}
 				}
 			}
 			displayer_type::end();

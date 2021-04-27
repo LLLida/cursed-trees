@@ -67,6 +67,7 @@ bool running = true;
 Mode mode = Mode::IDLE;
 int numTicks = 0;
 int minSun = 5;
+bool energyMode = false;
 
 static int parseArguments(int argc, char** argv);
 
@@ -150,6 +151,11 @@ int main(int argc, char** argv)
 			case graphics::Key::D:
 				dump_json(world);
 				endline.print("Dumped world to dump.json");
+				break;
+			case graphics::Key::e:
+				energyMode = !energyMode;
+				if (energyMode) endline.print("Energy mode enabled.");
+				else endline.print("Energy mode disabled.");
 				break;
 			case graphics::Key::s:
 				for (int i = 0; i < 100; i++)
@@ -245,7 +251,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		renderer.render();
+		renderer.render(energyMode);
 		gamescreen.draw();
 		std::this_thread::sleep_for(wait_time);
 	}
@@ -267,6 +273,7 @@ static int parseArguments(int argc, char** argv)
 		"CONTROLS:\n"
 		"   [q]: quit the program\n"
 		"   [<space>]: pause the program\n"
+		"   [e]: toggle energy mode\n"
 		"   [<up arrow>, i]: scroll screen up by 1 char\n"
 		"   [<left arrow>, j]: scroll screen left by 1 char\n"
 		"   [<down arrow>, k]: scroll screen down by 1 char\n"
