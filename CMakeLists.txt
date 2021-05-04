@@ -37,15 +37,40 @@ set(ARGS_BUILD_EXAMPLE OFF)
 set(ARGS_BUILD_UNITTESTS OFF)
 add_subdirectory(args)
 
-add_executable(${PROJECT_NAME} "src/main.cpp"
-  "src/Graphics/Curses.cpp" "src/Graphics/Widgets.cpp"
-  "src/Game/Genetic.cpp" "src/Game/Tree.cpp" "src/Game/World.cpp" "src/Game/Serialization.cpp")
-target_include_directories(${PROJECT_NAME} PRIVATE ${CURSES_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE 
-  fmt::fmt 
-  EnTT::EnTT 
-  effolkronium_random 
-  nlohmann_json::nlohmann_json 
-  lida::Memory-Pool
-  args
-  ${CURSES_LIBRARIES})
+if (NOT WIN32)
+  add_executable(${PROJECT_NAME} "src/main.cpp"
+	"src/Graphics/Curses.cpp" "src/Graphics/Widgets.cpp"
+	"src/Game/Genetic.cpp" "src/Game/Tree.cpp" "src/Game/World.cpp" "src/Game/Serialization.cpp")
+  target_include_directories(${PROJECT_NAME} PRIVATE ${CURSES_INCLUDE_DIR})
+  target_link_libraries(${PROJECT_NAME} PRIVATE 
+	fmt::fmt 
+	EnTT::EnTT 
+	effolkronium_random 
+	nlohmann_json::nlohmann_json 
+	lida::Memory-Pool
+	args
+	${CURSES_LIBRARIES})
+endif (NOT WIN32)
+
+# Emacs module
+# option(BUILD_EMACS_MODULE ON)
+set(BUILD_EMACS_MODULE ON)
+if (BUILD_EMACS_MODULE)
+  add_subdirectory(emacs-module.hpp)
+
+  set(MODULE_NAME ${PROJECT_NAME}-module)
+  # add_emacs_module(${MODULE_NAME}
+  # 	"src/Emacs/Module.cpp" "src/Emacs/Functions.cpp"
+  # 	"src/Game/Genetic.cpp" "src/Game/Tree.cpp" "src/Game/World.cpp")
+  add_library(${MODULE_NAME} SHARED
+	"src/Emacs/Module.cpp" "src/Emacs/Functions.cpp"
+	"src/Game/Genetic.cpp" "src/Game/Tree.cpp" "src/Game/World.cpp")
+  set_target_properties(${MODULE_NAME} PROPERTIES
+	PREFIX "")
+  target_link_libraries(${MODULE_NAME} PRIVATE emacs-module-base)
+  target_link_libraries(${MODULE_NAME} PRIVATE
+	fmt::fmt
+	EnTT::EnTT
+	effolkronium_random
+	lida::Memory-Pool)
+endif (BUILD_EMACS_MODULE)

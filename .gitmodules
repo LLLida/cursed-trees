@@ -16,3 +16,6 @@
 [submodule "args"]
 	path = args
 	url = https://github.com/Taywee/args.git
+[submodule "emacs-module.hpp"]
+	path = emacs-module.hpp
+	url = https://github.com/LLLida/emacs-module.hpp.git
