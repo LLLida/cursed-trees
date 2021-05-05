@@ -14,28 +14,26 @@ namespace module
 	emacs::env* pEnv;
 	emacs::value Qwidth;
 	emacs::value Qheight;
-	emacs::value Fset_square;
+	emacs::value Qset_square;
 	std::array<emacs::value, 8> Qcolors;
 
   public:
-	EmacsDisplayer(emacs::env& env)
-	  : pEnv(&env)
-	  , Qwidth(env.intern("cursed-trees/screen-width"))
-	  , Qheight(env.intern("cursed-trees/screen-height"))
-	  , Fset_square(env.intern("cursed-trees/set-square"))
-	  , Qcolors{ env.make_string("black"), env.make_string("red"),
-	             env.make_string("green"), env.make_string("yellow"), 
-				 env.make_string("blue"), env.make_string("magenta"),
-				 env.make_string("cyan"), env.make_string("white")
-		}
-	{}
+	EmacsDisplayer(emacs::env& env) {
+	  setEnv(env);
+	}
 
-	int width()
+	void setEnv(emacs::env& env) {
+	  pEnv = &env;
+	  Qwidth = env.intern("cursed-trees/screen-width");
+	  Qheight = env.intern("cursed-trees/screen-height");
+	}
+
+	int width() const
 	{
 	  return pEnv->extract_integer(pEnv->funcall(Qwidth, 0, nullptr));
 	}
 
-	int height()
+	int height() const
 	{
 	  return pEnv->extract_integer(pEnv->funcall(Qheight, 0, nullptr));
 	}
@@ -48,17 +46,27 @@ namespace module
 	  emacs::value Qfg = (color == 7) ? Qcolors[0] : Qcolors[7];
 	  emacs::value Qbg = Qcolors[color];
 	  std::array args{Qx, Qy, Qch, Qfg, Qbg};
-	  pEnv->funcall(Fset_square, args);
+	  pEnv->funcall(Qset_square, args);
 	}
 
 	void onScroll() {}
-	void begin() {}
+	void begin() {
+	  Qcolors = { 
+		pEnv->make_string("black"), pEnv->make_string("red"),
+		pEnv->make_string("green"), pEnv->make_string("yellow"), 
+		pEnv->make_string("blue"), pEnv->make_string("magenta"),
+		pEnv->make_string("cyan"), pEnv->make_string("white")
+	  };
+	  Qset_square = pEnv->intern("cursed-trees/set-square");
+	}
 	void end() {}
   };
 
+  static std::optional<entt::registry> gRegistry; /* gWorld must be destroyed after gRegistry */
   static std::optional<game::World> gWorld;
-  static std::optional<entt::registry> gRegistry;
+  static std::optional<game::Renderer<EmacsDisplayer>> gRenderer;
   static int gTicks;
+  static game::Vector2 gScreenPos{0, 0};
 
   static void
   error(emacs::env& env, std::string_view message) noexcept
@@ -78,6 +86,14 @@ namespace module
 	return env.extract_integer(env.funcall(Qeval, symbol));
   }
 
+  static void
+  render(emacs::env& env) noexcept
+  {
+	gRenderer->setEnv(env);
+	emacs::value Qenergy_mode = env.intern_and_eval("cursed-trees/energy-mode");
+	gRenderer->render(env.is_not_nil(Qenergy_mode));
+  }
+
   emacs::value
   Fcreate_world(emacs::env& env, ptrdiff_t nargs, emacs::value* args) noexcept
   {
@@ -92,7 +108,9 @@ namespace module
 	}
 	gRegistry = entt::registry();
 	gWorld = game::World(*gRegistry, width, height);
+	gRenderer.emplace(*gWorld, EmacsDisplayer(env));
 	gTicks = 0;
+	gScreenPos = {0, 0};
 	int numTrees = extract_integer(env, env.intern("cursed-trees/num-trees"));
 	int initialEnergy = extract_integer(env, env.intern("cursed-trees/initial-energy"));
 	if (numTrees > 0) {
@@ -128,9 +146,7 @@ namespace module
 	  numTicks++;
 	  gTicks++;
 	}
-	game::Renderer renderer(*gWorld, EmacsDisplayer(env));
-	emacs::value Qenergy_mode = env.intern_and_eval("cursed-trees/energy-mode");
-	renderer.render(env.is_not_nil(Qenergy_mode));
+	render(env);
 	return env.make_integer(numTicks);
   }
 
@@ -141,5 +157,20 @@ namespace module
 	  return env.intern("nil");
 	}
 	return env.make_integer(gTicks);
+  }
+
+  emacs::value Fscroll(emacs::env& env, ptrdiff_t, emacs::value* args) noexcept
+  {
+	if (!gRenderer) {
+	  error(env, "World is not created, call cursed-trees/create-world firstly");
+	  return env.intern("nil");
+	}
+	int dX = env.extract_integer(args[0]);
+	int dY = env.extract_integer(args[1]);
+	gRenderer->setEnv(env);
+	gRenderer->scroll(dX, dY);
+	render(env);
+	std::array newPos{env.make_integer(gRenderer->x), env.make_integer(gRenderer->y)};
+	return env.funcall(env.intern("list"), newPos);	/* (list gRenderer->x gRenderer->y)*/
   }
 }

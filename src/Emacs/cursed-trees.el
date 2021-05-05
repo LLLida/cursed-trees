@@ -43,11 +43,11 @@
 (define-derived-mode cursed-trees/mode special-mode "cursed-trees"
   (setq-local scroll-margin 0 ;; prevent user from scrolling the screen
 			  )
-  (define-key cursed-trees/mode-map (kbd "<SPC>") (lambda ()
-													(interactive)
-													(cursed-trees/tick)
-													(cursed-trees/display)
-													(force-mode-line-update)))
+  (define-key cursed-trees/mode-map (kbd "<SPC>") 'cursed-trees/skip)
+  (define-key cursed-trees/mode-map (kbd "f") 'cursed-trees/move-right)
+  (define-key cursed-trees/mode-map (kbd "b") 'cursed-trees/move-left)
+  (define-key cursed-trees/mode-map (kbd "p") 'cursed-trees/move-up)
+  (define-key cursed-trees/mode-map (kbd "n") 'cursed-trees/move-down)
   (setq mode-line-format (list
 						  '(:eval (format "Year:[%5d]" (cursed-trees/current-year)))))
   (add-hook 'kill-buffer-hook 'cursed-trees/destroy-world))
@@ -59,6 +59,40 @@
 (defun cursed-trees/screen-height ()
   "Return width of buffer `cursed-trees/buffer-name'."
   (- (window-height (get-buffer-window cursed-trees/buffer-name)) 9))
+
+(defun cursed-trees/skip (&optional years)
+  "Skip YEARS in simulation.
+If YEARS is nil than skip 1 year."
+  (interactive)
+  (if years
+	  (cursed-trees/tick years)
+	(cursed-trees/tick))
+  (cursed-trees/display)
+  (force-mode-line-update))
+
+(defun cursed-trees/move-right ()
+  "Move screen 1 square right."
+  (interactive)
+  (cursed-trees/scroll 1 0)
+  (cursed-trees/display))
+
+(defun cursed-trees/move-left ()
+  "Move screen 1 square left."
+  (interactive)
+  (cursed-trees/scroll -1 0)
+  (cursed-trees/display))
+
+(defun cursed-trees/move-up ()
+  "Move screen 1 square up."
+  (interactive)
+  (cursed-trees/scroll 0 1)
+  (cursed-trees/display))
+
+(defun cursed-trees/move-down ()
+  "Move screen 1 square down."
+  (interactive)
+  (cursed-trees/scroll 0 -1)
+  (cursed-trees/display))
 
 (defun cursed-trees ()
   "Launch Emacs Game Engine."
