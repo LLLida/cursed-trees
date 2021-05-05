@@ -25,12 +25,6 @@ provide(emacs::env& env, const char* feature)
 int emacs::module_init(runtime &ert) noexcept
 {
   auto& env = ert.get_environment();
-  emacs::value fun = env.make_function(0, 0,
-									   [&](emacs::env& env, ptrdiff_t nargs, emacs::value* args) {
-										 return env.make_integer(42);
-									   },
-									   "nihao!");
-  bind_function(env, "my/function-nihao", fun);
 
   bind_function(env, "cursed-trees/create-world",
 				env.make_function(0, 2, module::Fcreate_world, "Create world"));
