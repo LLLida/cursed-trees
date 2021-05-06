@@ -105,7 +105,12 @@ Return value of `cursed-trees/energy-mode'."
 
 (defun cursed-trees/move (dx dy)
   "Move screen DX squares right and DY squares up."
-  (setq cursed-trees/current-pos (cursed-trees/scroll dx dy))
+  (let ((old-pos cursed-trees/current-pos))
+	(setq cursed-trees/current-pos (cursed-trees/scroll dx dy))
+	(when (and old-pos ;; check if (= old-pos current-pos) only when old-pos is non-nil
+			   (= (car cursed-trees/current-pos) (car old-pos))
+			   (= (cadr cursed-trees/current-pos) (cadr old-pos)))
+	  (message "Can't move")))
   (cursed-trees/display)
   (force-mode-line-update))
 

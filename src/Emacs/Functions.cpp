@@ -117,7 +117,7 @@ namespace module
 	  for (unsigned i = 0; numTrees > 0; numTrees--)
 		game::Tree::spawn(*gWorld, i += 5, initialEnergy);
 	}
-	else error(env, "cursed-trees/num-trees must be a positive value");
+	else error(env, "`cursed-trees/num-trees' must be a positive value");
 	return env.intern("t");
   }
 
