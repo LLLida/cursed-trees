@@ -137,12 +137,13 @@ namespace module
 	  return env.intern("nil");
 	}
 	unsigned int numIterations = 1;
-	if (nargs > 0)
+	if (nargs > 0 && env.is_not_nil(args[0]))
 	  numIterations = env.extract_integer(args[0]);
 	int sunEnergy = extract_integer(env, env.intern("cursed-trees/sun-energy"));
 	int numTicks = 0;
 	while (numIterations--) {
-	  gWorld->tick(sunEnergy, 3);
+	  if (!gWorld->tick(sunEnergy, 3))
+		break;
 	  numTicks++;
 	  gTicks++;
 	}
@@ -150,7 +151,8 @@ namespace module
 	return env.make_integer(numTicks);
   }
 
-  emacs::value Fcurrent_year(emacs::env& env, ptrdiff_t, emacs::value*) noexcept
+  emacs::value
+  Fcurrent_year(emacs::env& env, ptrdiff_t, emacs::value*) noexcept
   {
 	if (!gWorld) {
 	  error(env, "World is not created, call cursed-trees/create-world firstly");
@@ -159,7 +161,8 @@ namespace module
 	return env.make_integer(gTicks);
   }
 
-  emacs::value Fscroll(emacs::env& env, ptrdiff_t, emacs::value* args) noexcept
+  emacs::value
+  Fscroll(emacs::env& env, ptrdiff_t, emacs::value* args) noexcept
   {
 	if (!gRenderer) {
 	  error(env, "World is not created, call cursed-trees/create-world firstly");
@@ -172,5 +175,15 @@ namespace module
 	render(env);
 	std::array newPos{env.make_integer(gRenderer->x), env.make_integer(gRenderer->y)};
 	return env.funcall(env.intern("list"), newPos);	/* (list gRenderer->x gRenderer->y)*/
+  }
+
+  emacs::value
+  Fnum_trees(emacs::env& env, ptrdiff_t, emacs::value*) noexcept
+  {
+	if (!gRegistry) {
+	  error(env, "World is not created, call cursed-trees/create-world firstly");
+	  return env.intern("nil");
+	}
+	return env.make_integer(gRegistry->size<game::Tree>());
   }
 }

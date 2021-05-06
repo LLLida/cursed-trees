@@ -9,4 +9,5 @@ namespace module
   emacs::value Ftick(emacs::env& env, ptrdiff_t nargs, emacs::value* args) noexcept;
   emacs::value Fcurrent_year(emacs::env& env, ptrdiff_t nargs, emacs::value* args) noexcept;
   emacs::value Fscroll(emacs::env& env, ptrdiff_t nargs, emacs::value* args) noexcept;
+  emacs::value Fnum_trees(emacs::env& env, ptrdiff_t nargs, emacs::value* args) noexcept;
 }

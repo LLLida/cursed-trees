@@ -52,11 +52,14 @@
   (define-key cursed-trees/mode-map (kbd "p") 'cursed-trees/move-up)
   (define-key cursed-trees/mode-map (kbd "n") 'cursed-trees/move-down)
   (define-key cursed-trees/mode-map (kbd "e") 'cursed-trees/toggle-energy-mode)
+  (define-key cursed-trees/mode-map (kbd "+") 'cursed-trees/increase-sun-energy)
+  (define-key cursed-trees/mode-map (kbd "-") 'cursed-trees/decrease-sun-energy)
   (setq mode-line-format (list
-						  '(:eval (format "Year:[%5d] Pos:[%3d %3d]"
+						  '(:eval (format "Year:[%5d] Pos:[%3d %3d] Trees:[%4d]"
 										  (cursed-trees/current-year)
 										  (car cursed-trees/current-pos)
-										  (cadr cursed-trees/current-pos)))))
+										  (cadr cursed-trees/current-pos)
+										  (cursed-trees/num-trees)))))
   (add-hook 'kill-buffer-hook 'cursed-trees/destroy-world)
   (add-hook 'kill-emacs-hook 'cursed-trees/destroy-world))
 
@@ -72,9 +75,8 @@
   "Skip YEARS in simulation.
 If YEARS is nil than skip 1 year."
   (interactive)
-  (if years
-	  (cursed-trees/tick years)
-	(cursed-trees/tick))
+  (when (<= (cursed-trees/tick years) 0)
+	(message "No life."))
   (cursed-trees/display)
   (force-mode-line-update))
 
@@ -88,6 +90,18 @@ Return value of `cursed-trees/energy-mode'."
 	(message "Energy mode disabled."))
   (cursed-trees/display)
   cursed-trees/energy-mode)
+
+(defun cursed-trees/increase-sun-energy ()
+  "Increment `cursed-trees/sun-energy' by 1."
+  (interactive)
+  (message "Sun's energy is now %d"
+		   (setq cursed-trees/sun-energy (1+ cursed-trees/sun-energy))))
+
+(defun cursed-trees/decrease-sun-energy ()
+  "Decrement `cursed-trees/sun-energy' by 1."
+  (interactive)
+  (message "Sun's energy is now %d"
+		   (setq cursed-trees/sun-energy (1- cursed-trees/sun-energy))))
 
 (defun cursed-trees/move (dx dy)
   "Move screen DX squares right and DY squares up."

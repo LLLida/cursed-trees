@@ -36,6 +36,8 @@ int emacs::module_init(runtime &ert) noexcept
 				env.make_function(0, 0, module::Fcurrent_year, "Get number of ticks since creation."));
   bind_function(env, "cursed-trees/scroll",
 				env.make_function(2, 2, module::Fscroll, "Scroll screen."));
+  bind_function(env, "cursed-trees/num-trees",
+				env.make_function(0, 0, module::Fnum_trees, "Get number of trees in the world."));
 
   provide(env, "cursed-trees-module");
   return 0;
