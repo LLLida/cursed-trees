@@ -51,6 +51,7 @@
   (define-key cursed-trees/mode-map (kbd "b") 'cursed-trees/move-left)
   (define-key cursed-trees/mode-map (kbd "p") 'cursed-trees/move-up)
   (define-key cursed-trees/mode-map (kbd "n") 'cursed-trees/move-down)
+  (define-key cursed-trees/mode-map (kbd "e") 'cursed-trees/toggle-energy-mode)
   (setq mode-line-format (list
 						  '(:eval (format "Year:[%5d] Pos:[%3d %3d]"
 										  (cursed-trees/current-year)
@@ -65,7 +66,7 @@
 
 (defun cursed-trees/screen-height ()
   "Return width of buffer `cursed-trees/buffer-name'."
-  (- (window-height (get-buffer-window cursed-trees/buffer-name)) 9))
+  (- (window-height (get-buffer-window cursed-trees/buffer-name)) 5))
 
 (defun cursed-trees/skip (&optional years)
   "Skip YEARS in simulation.
@@ -76,6 +77,17 @@ If YEARS is nil than skip 1 year."
 	(cursed-trees/tick))
   (cursed-trees/display)
   (force-mode-line-update))
+
+(defun cursed-trees/toggle-energy-mode ()
+  "Toggle `cursed-trees/energy-mode'.
+Return value of `cursed-trees/energy-mode'."
+  (interactive)
+  (setq cursed-trees/energy-mode (not cursed-trees/energy-mode))
+  (if cursed-trees/energy-mode
+	  (message "Energy mode enabled.")
+	(message "Energy mode disabled."))
+  (cursed-trees/display)
+  cursed-trees/energy-mode)
 
 (defun cursed-trees/move (dx dy)
   "Move screen DX squares right and DY squares up."
