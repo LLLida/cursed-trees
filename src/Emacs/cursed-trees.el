@@ -124,7 +124,7 @@ Return value of `cursed-trees/energy-mode'."
   (cursed-trees/display))
 
 (defun cursed-trees/init ()
-  "Reinit game engine."
+  "Init `cursed-trees'."
   (interactive)
   (setq cursed-trees/field (make-vector (* (cursed-trees/screen-width)
 										   (cursed-trees/screen-height))
