@@ -7,6 +7,9 @@
 (defvar cursed-trees/field nil
   "Vector with game's cells.")
 
+(defvar cursed-trees/current-pos nil
+  "Current camera's position.")
+
 (defgroup cursed-trees nil
   "`cursed-trees' - tree evolution simulation."
   :prefix "cursed-trees/"
@@ -49,8 +52,12 @@
   (define-key cursed-trees/mode-map (kbd "p") 'cursed-trees/move-up)
   (define-key cursed-trees/mode-map (kbd "n") 'cursed-trees/move-down)
   (setq mode-line-format (list
-						  '(:eval (format "Year:[%5d]" (cursed-trees/current-year)))))
-  (add-hook 'kill-buffer-hook 'cursed-trees/destroy-world))
+						  '(:eval (format "Year:[%5d] Pos:[%3d %3d]"
+										  (cursed-trees/current-year)
+										  (car cursed-trees/current-pos)
+										  (cadr cursed-trees/current-pos)))))
+  (add-hook 'kill-buffer-hook 'cursed-trees/destroy-world)
+  (add-hook 'kill-emacs-hook 'cursed-trees/destroy-world))
 
 (defun cursed-trees/screen-width ()
   "Return width of buffer `cursed-trees/buffer-name'."
@@ -70,32 +77,34 @@ If YEARS is nil than skip 1 year."
   (cursed-trees/display)
   (force-mode-line-update))
 
+(defun cursed-trees/move (dx dy)
+  "Move screen DX squares right and DY squares up."
+  (setq cursed-trees/current-pos (cursed-trees/scroll dx dy))
+  (cursed-trees/display)
+  (force-mode-line-update))
+
 (defun cursed-trees/move-right ()
   "Move screen 1 square right."
   (interactive)
-  (cursed-trees/scroll 1 0)
-  (cursed-trees/display))
+  (cursed-trees/move 1 0))
 
 (defun cursed-trees/move-left ()
   "Move screen 1 square left."
   (interactive)
-  (cursed-trees/scroll -1 0)
-  (cursed-trees/display))
+  (cursed-trees/move -1 0))
 
 (defun cursed-trees/move-up ()
   "Move screen 1 square up."
   (interactive)
-  (cursed-trees/scroll 0 1)
-  (cursed-trees/display))
+  (cursed-trees/move 0 1))
 
 (defun cursed-trees/move-down ()
   "Move screen 1 square down."
   (interactive)
-  (cursed-trees/scroll 0 -1)
-  (cursed-trees/display))
+  (cursed-trees/move 0 -1))
 
 (defun cursed-trees ()
-  "Launch Emacs Game Engine."
+  "Launch tree simulation."
   (interactive)
   (switch-to-buffer cursed-trees/buffer-name)
   (cursed-trees/init)
