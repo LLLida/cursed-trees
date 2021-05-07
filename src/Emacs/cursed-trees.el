@@ -164,6 +164,7 @@ Return value of `cursed-trees/energy-mode'."
   (when cursed-trees/timer
     (cancel-timer cursed-trees/timer)
     (setq cursed-trees/timer nil))
+  (require 'cursed-trees-module)
   (setq cursed-trees/timer
         (run-at-time nil 0.5 #'cursed-trees/skip))
   (switch-to-buffer cursed-trees/buffer-name)
