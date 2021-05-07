@@ -28,8 +28,14 @@ cmake --build . -j N # N is number of threads that will be used for build, 2-3 w
 
   By the moment the project is tested only on GNU/Linux but I suppose it will work on any Unix-like system.
 
-* todo
+* Emacs module
+  Now cursed-trees can be launched in your Emacs! For installation do this:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "path-to-repo/build") ;; Emacs can now (require 'cursed-trees-module)
+(add-to-list 'load-path "path-to-repo/src/Emacs") ;; Emacs can now (require 'cursed-trees)
+(require 'cursed-trees)
+#+END_SRC
+  Then you can =M-x cursed-trees=.
+[[./assets/screenshot_emacs1.png]]
 
-  + Saving/loading system
-  + Embedding scripting language(lua?)
-  + More complex genom and energy system
+[[./assets/screenshot_emacs2.png]]
