@@ -10,6 +10,9 @@
 (defvar cursed-trees/current-pos nil
   "Current camera's position.")
 
+(defvar cursed-trees/timer nil
+  "Timer for `cursed-trees'.")
+
 (defgroup cursed-trees nil
   "`cursed-trees' - tree evolution simulation."
   :prefix "cursed-trees/"
@@ -48,19 +51,38 @@
 			  )
   (define-key cursed-trees/mode-map (kbd "<SPC>") 'cursed-trees/skip)
   (define-key cursed-trees/mode-map (kbd "f") 'cursed-trees/move-right)
+  (define-key cursed-trees/mode-map (kbd "<right>") 'cursed-trees/move-right)
   (define-key cursed-trees/mode-map (kbd "b") 'cursed-trees/move-left)
+  (define-key cursed-trees/mode-map (kbd "<left>") 'cursed-trees/move-left)
   (define-key cursed-trees/mode-map (kbd "p") 'cursed-trees/move-up)
+  (define-key cursed-trees/mode-map (kbd "<up>") 'cursed-trees/move-up)
   (define-key cursed-trees/mode-map (kbd "n") 'cursed-trees/move-down)
+  (define-key cursed-trees/mode-map (kbd "<down>") 'cursed-trees/move-down)
   (define-key cursed-trees/mode-map (kbd "e") 'cursed-trees/toggle-energy-mode)
   (define-key cursed-trees/mode-map (kbd "+") 'cursed-trees/increase-sun-energy)
   (define-key cursed-trees/mode-map (kbd "-") 'cursed-trees/decrease-sun-energy)
+  (define-key cursed-trees/mode-map (kbd "s") (lambda ()
+                                                "Skip 100 years."
+                                                (interactive)
+                                                (cursed-trees/skip 100)))
+  (define-key cursed-trees/mode-map (kbd "S") (lambda ()
+                                                "Skip 1000 years."
+                                                (interactive)
+                                                (cursed-trees/skip 1000)))
   (setq mode-line-format (list
 						  '(:eval (format "Year:[%5d] Pos:[%3d %3d] Trees:[%4d]"
 										  (cursed-trees/current-year)
 										  (car cursed-trees/current-pos)
 										  (cadr cursed-trees/current-pos)
 										  (cursed-trees/num-trees)))))
-  (add-hook 'kill-buffer-hook 'cursed-trees/destroy-world)
+  (setq-local kill-buffer-hook (lambda ()
+                                 (cursed-trees/destroy-world)
+                                 (when cursed-trees/timer
+                                   (cancel-timer cursed-trees/timer)
+                                   (setq cursed-trees/timer nil)))
+              ;; Recreate field when resizing
+              window-size-change-functions (list (lambda (&rest ignore)
+                                                   (cursed-trees/create-field))))
   (add-hook 'kill-emacs-hook 'cursed-trees/destroy-world))
 
 (defun cursed-trees/screen-width ()
@@ -75,8 +97,11 @@
   "Skip YEARS in simulation.
 If YEARS is nil than skip 1 year."
   (interactive)
-  (when (<= (cursed-trees/tick years) 0)
-	(message "No life."))
+  (let ((ticks (cursed-trees/tick years)))
+    (cond ((= ticks 0)
+           (message "No life."))
+          ((and years (> years 1)) ;; years may be nil
+           (message "Skipped %d years." years))))
   (cursed-trees/display)
   (force-mode-line-update))
 
@@ -88,8 +113,7 @@ Return value of `cursed-trees/energy-mode'."
   (if cursed-trees/energy-mode
 	  (message "Energy mode enabled.")
 	(message "Energy mode disabled."))
-  (cursed-trees/display)
-  cursed-trees/energy-mode)
+  (cursed-trees/display))
 
 (defun cursed-trees/increase-sun-energy ()
   "Increment `cursed-trees/sun-energy' by 1."
@@ -137,35 +161,46 @@ Return value of `cursed-trees/energy-mode'."
 (defun cursed-trees ()
   "Launch tree simulation."
   (interactive)
+  (when cursed-trees/timer
+    (cancel-timer cursed-trees/timer)
+    (setq cursed-trees/timer nil))
+  (setq cursed-trees/timer
+        (run-at-time nil 0.5 #'cursed-trees/skip))
   (switch-to-buffer cursed-trees/buffer-name)
   (cursed-trees/init)
   (cursed-trees/mode)
   (cursed-trees/display))
 
-(defun cursed-trees/init ()
-  "Init `cursed-trees'."
+(defun cursed-trees/create-field ()
+  "Create vector containing cells for rendering."
   (interactive)
   (setq cursed-trees/field (make-vector (* (cursed-trees/screen-width)
 										   (cursed-trees/screen-height))
-										?\.))
+										?\.)))
+
+(defun cursed-trees/init ()
+  "Init `cursed-trees'."
+  (interactive)
+  (cursed-trees/create-field)
   (require 'cursed-trees-module)
   (cursed-trees/create-world))
 
 (defun cursed-trees/display ()
   "Display the game."
   (interactive)
-  (let ((inhibit-read-only t)
-		(pos (point))
-		(width (cursed-trees/screen-width))
-		(height (cursed-trees/screen-height)))
-	(erase-buffer)
-	(dotimes (row height)
-	  (dotimes (col width)
-		(insert (cursed-trees/get-square col row)))
-	  ;; insert endline only when row is not last
-	  (when (/= row (1- height))
-		(insert "\n")))
-	(goto-char pos)))
+  (with-current-buffer (get-buffer cursed-trees/buffer-name)
+    (let ((inhibit-read-only t)
+		  (pos (point))
+		  (width (cursed-trees/screen-width))
+		  (height (cursed-trees/screen-height)))
+	  (erase-buffer)
+	  (dotimes (row height)
+	    (dotimes (col width)
+		  (insert (cursed-trees/get-square col row)))
+	    ;; insert endline only when row is not last
+	    (when (/= row (1- height))
+		  (insert "\n")))
+	  (goto-char pos))))
 
 (defun cursed-trees/get-square (x y)
   "Get square at position (X, Y)."
@@ -179,6 +214,7 @@ Return value of `cursed-trees/energy-mode'."
 		(propertize value
 					'face (list :foreground fgcolor
 								:background bgcolor))))
+
 
 
 

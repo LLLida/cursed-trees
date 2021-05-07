@@ -133,7 +133,7 @@ namespace module
   Ftick(emacs::env& env, ptrdiff_t nargs, emacs::value* args) noexcept
   {
 	if (!gWorld) {
-	  error(env, "World is not created, call cursed-trees/create-world firstly");
+	  error(env, "World is not created, call `cursed-trees/create-world' firstly");
 	  return env.intern("nil");
 	}
 	unsigned int numIterations = 1;
@@ -155,7 +155,7 @@ namespace module
   Fcurrent_year(emacs::env& env, ptrdiff_t, emacs::value*) noexcept
   {
 	if (!gWorld) {
-	  error(env, "World is not created, call cursed-trees/create-world firstly");
+	  error(env, "World is not created, call `cursed-trees/create-world' firstly");
 	  return env.intern("nil");
 	}
 	return env.make_integer(gTicks);
@@ -165,7 +165,7 @@ namespace module
   Fscroll(emacs::env& env, ptrdiff_t, emacs::value* args) noexcept
   {
 	if (!gRenderer) {
-	  error(env, "World is not created, call cursed-trees/create-world firstly");
+	  error(env, "World is not created, call `cursed-trees/create-world' firstly");
 	  return env.intern("nil");
 	}
 	int dX = env.extract_integer(args[0]);
@@ -181,7 +181,7 @@ namespace module
   Fnum_trees(emacs::env& env, ptrdiff_t, emacs::value*) noexcept
   {
 	if (!gRegistry) {
-	  error(env, "World is not created, call cursed-trees/create-world firstly");
+	  error(env, "World is not created, call `cursed-trees/create-world' firstly");
 	  return env.intern("nil");
 	}
 	return env.make_integer(gRegistry->size<game::Tree>());
