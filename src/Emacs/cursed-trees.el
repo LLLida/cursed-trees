@@ -1,4 +1,4 @@
-;; cursed-trees --- tree evolution simulation -*- lexical binding: t -*-
+;;; cursed-trees --- tree evolution simulation -*- lexical binding: t -*-
 
 ;;; Commentary:
 
@@ -21,7 +21,8 @@
 (defgroup cursed-trees nil
   "`cursed-trees' - tree evolution simulation."
   :prefix "cursed-trees/"
-  :group 'games)
+  :group 'games
+  :link "https://github.com/LLLida/cursed-trees/tree/emacs-module")
 
 (defcustom cursed-trees/world-width 200
   "Width of world."

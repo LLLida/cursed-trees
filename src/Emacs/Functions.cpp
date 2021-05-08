@@ -62,7 +62,7 @@ namespace module
 	void end() {}
   };
 
-  static std::optional<entt::registry> gRegistry; /* gWorld must be destroyed after gRegistry */
+  static std::optional<entt::registry> gRegistry; /* FIXME: gWorld must be destroyed after gRegistry */
   static std::optional<game::World> gWorld;
   static std::optional<game::Renderer<EmacsDisplayer>> gRenderer;
   static int gTicks;
