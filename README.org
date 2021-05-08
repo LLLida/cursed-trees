@@ -35,6 +35,7 @@ cmake --build . -j N # N is number of threads that will be used for build, 2-3 w
 (add-to-list 'load-path "path-to-repo/src/Emacs") ;; Emacs can now (require 'cursed-trees)
 (require 'cursed-trees)
 #+END_SRC
+  or place =cursed-trees-module.so/dll= and =cursed-trees.el= to your load path.
   Then you can =M-x cursed-trees=.
 [[./assets/screenshot_emacs1.png]]
 
