@@ -42,7 +42,7 @@ int emacs::module_init(runtime &ert) noexcept
                                   "If NUM-TICKS provided then skip NUM-TICKS years.\n"
                                   "Return number of real ticks(trees may die and function will stop).\n"
                                   "\n\(fn &optional NUM-TICKS)"));
-bind_function(env, "cursed-trees/current-year",
+  bind_function(env, "cursed-trees/current-year",
 				env.make_function(0, 0, module::Fcurrent_year,
                                   "Return number of years(ticks) since creation.\n"));
   bind_function(env, "cursed-trees/scroll",

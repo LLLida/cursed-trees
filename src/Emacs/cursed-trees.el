@@ -1,6 +1,30 @@
-;;; cursed-trees --- tree evolution simulation -*- lexical binding: t -*-
+;;; cursed-trees --- tree evolution simulation       -*- lexical binding: t; -*-
+
+;;; Copyright 2021 Adil Mokhammad
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; Tree evolution simulation.  The main part of this program is written in C++ so you need build cursed-trees-module.
+;; Trees evolve by itself just watch how they survive.
+;; To run the program add cursed-trees-module.so and this file to your load path.  Then eval (require 'cursed-trees) and type M-x cursed-trees.
+;; You can move camera by 'p', 'b', 'n', 'f'.
+;; Skip 100 years by typing 's'.
+;; Skip 1000 years by typing 'S'.
+;; Toggle energy mode by typing 'e'.
+;; Type +/- to increase/decrease sun's energy.
 
 ;;; Code:
 
