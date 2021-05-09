@@ -17,9 +17,11 @@
 
 ;;; Commentary:
 
-;; Tree evolution simulation.  The main part of this program is written in C++ so you need build cursed-trees-module.
+;; Tree evolution simulation.  The main part of this program is written in C++
+;; so you need build cursed-trees-module.
 ;; Trees evolve by itself just watch how they survive.
-;; To run the program add cursed-trees-module.so and this file to your load path.  Then eval (require 'cursed-trees) and type M-x cursed-trees.
+;; To run the program add cursed-trees-module.so and this file to your load path.
+;; Then eval (require 'cursed-trees) and type M-x cursed-trees.
 ;; You can move camera by 'p', 'b', 'n', 'f'.
 ;; Skip 100 years by typing 's'.
 ;; Skip 1000 years by typing 'S'.
@@ -75,6 +77,16 @@
 (defcustom cursed-trees/energy-mode nil
   "Non-nil means display trees' energy."
   :type 'boolean)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Declarations ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(declare-function cursed-trees/create-world "ext:cursed-trees/src/Emacs/Module.cpp" t)
+(declare-function cursed-trees/current-year "ext:cursed-trees/src/Emacs/Module.cpp" t)
+(declare-function cursed-trees/num-trees  "ext:cursed-trees/src/Emacs/Module.cpp" t)
+(declare-function cursed-trees/scroll "ext:cursed-trees/src/Emacs/Module.cpp" t)
+(declare-function cursed-trees/tick "ext:cursed-trees/src/Emacs/Module.cpp" t)
+(declare-function cursed-trees/destroy-world "ext:cursed-trees/src/Emacs/Module.cpp" t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Private functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
